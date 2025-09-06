@@ -73,7 +73,7 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
     phone: document.getElementById('phone').value
   };
   try {
-    await liff.init({ liffId: "YOUR_LIFF_ID" });
+    await liff.init({ liffId: "2008066585-jPdDKdgO" });
     await liff.sendMessages([{ type: 'text', text: JSON.stringify(values, null, 2) }]);
     alert('送信完了');
   } catch(err) {

@@ -5,45 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Waseda Club</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  :root {
+    --main-blue: #005bac; /* W早稲田ゼミのコーポレートブルー系 */
+    --light-blue: #e6f0fa;
+  }
+  body {
+    font-family: "Segoe UI", "Hiragino Sans", "メイリオ", sans-serif;
+    background: var(--light-blue);
+    margin: 0;
+    padding: 0;
+  }
+  h2 {
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--main-blue);
+    font-weight: 600;
+  }
+  form {
+    max-width: 480px;
+    margin: auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  }
+  label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    color: #333;
+  }
+  input, select {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: 1.5px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 1.2rem;
+    box-sizing: border-box;
+    transition: 0.2s;
+  }
+  input:focus, select:focus {
+    border-color: var(--main-blue);
+    outline: none;
+    box-shadow: 0 0 6px rgba(0,91,172,0.3);
+  }
+  button {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--main-blue);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+  }
+  button:hover {
+    background: #004080;
+  }
+  button:active {
+    transform: scale(0.98);
+  }
+</style>
 </head>
 <body>
 <h2>ワセダクラブ登録フォーム</h2>
 
 <form id="liffForm">
-  <label>姓（ひらがな）<br>
-    <input type="text" id="lastName" pattern="^[ぁ-んー]+$" required>
-  </label><br><br>
+  <label>姓（ひらがな）</label>
+  <input type="text" id="lastName" pattern="^[ぁ-んー]+$" required>
 
-  <label>名（ひらがな）<br>
-    <input type="text" id="firstName" pattern="^[ぁ-んー]+$" required>
-  </label><br><br>
+  <label>名（ひらがな）</label>
+  <input type="text" id="firstName" pattern="^[ぁ-んー]+$" required>
 
-  <label>生年月日<br>
-    <input type="date" id="birthDate" required>
-  </label><br><br>
+  <label>生年月日</label>
+  <input type="date" id="birthDate" required>
 
-  <label>卒業高校所在地<br>
-    <select id="prefecture" required>
-      <option value="">選択してください</option>
-      <option value="栃木県">栃木県</option>
-      <option value="群馬県">群馬県</option>
-      <option value="埼玉県">埼玉県</option>
-      <option value="その他">その他</option>
-    </select>
-  </label><br><br>
+  <label>卒業高校所在地</label>
+  <select id="prefecture" required>
+    <option value="">選択してください</option>
+    <option value="栃木県">栃木県</option>
+    <option value="群馬県">群馬県</option>
+    <option value="埼玉県">埼玉県</option>
+    <option value="その他">その他</option>
+  </select>
 
-  <label id="schoolLabel">卒業高校<br>
-    <select id="school"></select>
-    <input type="text" id="schoolOther" style="display:none;" placeholder="高校名を入力">
-  </label><br><br>
+  <label id="schoolLabel">卒業高校</label>
+  <select id="school"></select>
+  <input type="text" id="schoolOther" style="display:none;" placeholder="高校名を入力">
 
-  <label>携帯番号（ハイフン付き）<br>
-    <input type="tel" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" required>
-  </label><br><br>
+  <label>携帯番号（ハイフン付き）</label>
+  <input type="tel" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" required>
 
   <button type="submit">送信</button>
 </form>
-
 
 <script>
 let schoolsData = {};
@@ -97,7 +155,6 @@ ${phone}`;
   try {
     await liff.init({ liffId: "2008066585-jPdDKdgO" });
     await liff.sendMessages([{ type: 'text', text: message }]);
-    // 送信後にLIFFを閉じる
     liff.closeWindow();
   } catch(err) {
     alert('送信失敗: ' + err);

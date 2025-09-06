@@ -100,6 +100,14 @@
   <label>携帯番号（記入例：090-1234-5678）</label>
   <input type="tel" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" required>
 
+  <label>１次登録特典ギフト</label>
+  <select id="gift" required>
+    <option value="">選択してください</option>
+    <option value="PayPay">PayPay</option>
+    <option value="Amazonギフトコード">Amazonギフトコード</option>
+    <option value="Google Playギフトコード">Google Playギフトコード</option>
+  </select>
+
   <button type="submit">送信</button>
 </form>
 
@@ -144,13 +152,15 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   const prefecture = prefectureEl.value;
   const school = prefecture === 'その他' ? schoolOtherEl.value : schoolEl.value;
   const phone = document.getElementById('phone').value;
+  const gift = document.getElementById('gift').value;
 
   const message = `＜ワセダクラブ1次登録情報＞
 ${lastName}
 ${firstName}
 ${birthDate}
 ${school}
-${phone}`;
+${phone}
+${gift}`;
 
   try {
     await liff.init({ liffId: "2008066585-jPdDKdgO" });

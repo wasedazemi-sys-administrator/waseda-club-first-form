@@ -87,12 +87,12 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   const school = prefecture === 'その他' ? schoolOtherEl.value : schoolEl.value;
   const phone = document.getElementById('phone').value;
 
-  const message = `＜ワセダクラブ登録情報＞
-姓　　　　　　　：${lastName}
-名　　　　　　　：${firstName}
-生年月日　　　　：${birthDate}
-卒業（予定）高校：${school}
-電話番号　　　　：${phone}`;
+  const message = `＜ワセダクラブ1次登録情報＞
+${lastName}
+${firstName}
+${birthDate}
+${school}
+${phone}`;
 
   try {
     await liff.init({ liffId: "2008066585-jPdDKdgO" });

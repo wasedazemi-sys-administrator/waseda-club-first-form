@@ -3,17 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LIFF Form</title>
+<title>Waseda Club</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
-<h2>高校フォーム</h2>
+<h2>ワセダクラブ登録フォーム</h2>
 
 <form id="liffForm">
-  <label>姓（ひらがな）<input type="text" id="lastName" pattern="^[ぁ-んー]+$" required></label>
-  <label>名（ひらがな）<input type="text" id="firstName" pattern="^[ぁ-んー]+$" required></label>
-  <label>生年月日<input type="date" id="birthDate" required></label>
-  <label>卒業高校所在地
+  <label>姓（ひらがな）<br>
+    <input type="text" id="lastName" pattern="^[ぁ-んー]+$" required>
+  </label><br><br>
+
+  <label>名（ひらがな）<br>
+    <input type="text" id="firstName" pattern="^[ぁ-んー]+$" required>
+  </label><br><br>
+
+  <label>生年月日<br>
+    <input type="date" id="birthDate" required>
+  </label><br><br>
+
+  <label>卒業高校所在地<br>
     <select id="prefecture" required>
       <option value="">選択してください</option>
       <option value="栃木県">栃木県</option>
@@ -21,14 +30,20 @@
       <option value="埼玉県">埼玉県</option>
       <option value="その他">その他</option>
     </select>
-  </label>
-  <label id="schoolLabel">卒業高校
+  </label><br><br>
+
+  <label id="schoolLabel">卒業高校<br>
     <select id="school"></select>
     <input type="text" id="schoolOther" style="display:none;" placeholder="高校名を入力">
-  </label>
-  <label>携帯番号（ハイフン付き）<input type="tel" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" required></label>
+  </label><br><br>
+
+  <label>携帯番号（ハイフン付き）<br>
+    <input type="tel" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" required>
+  </label><br><br>
+
   <button type="submit">送信</button>
 </form>
+
 
 <script>
 let schoolsData = {};

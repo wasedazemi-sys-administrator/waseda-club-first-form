@@ -79,22 +79,31 @@ prefectureEl.addEventListener('change', () => {
 
 document.getElementById('liffForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const values = {
-    lastName: document.getElementById('lastName').value,
-    firstName: document.getElementById('firstName').value,
-    birthDate: document.getElementById('birthDate').value,
-    prefecture: prefectureEl.value,
-    school: prefectureEl.value === 'その他' ? schoolOtherEl.value : schoolEl.value,
-    phone: document.getElementById('phone').value
-  };
+
+  const lastName = document.getElementById('lastName').value;
+  const firstName = document.getElementById('firstName').value;
+  const birthDate = document.getElementById('birthDate').value;
+  const prefecture = prefectureEl.value;
+  const school = prefecture === 'その他' ? schoolOtherEl.value : schoolEl.value;
+  const phone = document.getElementById('phone').value;
+
+  const message = `＜ワセダクラブ登録情報＞
+姓　　　　　　　：${lastName}
+名　　　　　　　：${firstName}
+生年月日　　　　：${birthDate}
+卒業（予定）高校：${school}
+電話番号　　　　：${phone}`;
+
   try {
     await liff.init({ liffId: "2008066585-jPdDKdgO" });
-    await liff.sendMessages([{ type: 'text', text: JSON.stringify(values, null, 2) }]);
-    alert('送信完了');
+    await liff.sendMessages([{ type: 'text', text: message }]);
+    // 送信後にLIFFを閉じる
+    liff.closeWindow();
   } catch(err) {
-    alert('送信失敗: '+err);
+    alert('送信失敗: ' + err);
   }
 });
 </script>
+
 </body>
 </html>

@@ -88,9 +88,25 @@
     overflow-y: auto;
   }
 
+  /* Choices.js 入力ボックスを他の input と揃える */
+  .choices__inner {
+    min-height: 2.5rem;
+    padding: 0.7rem;
+    border-radius: 10px;
+    border: 1.5px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  .choices__input {
+    padding: 0;
+    margin: 0;
+    height: auto;
+  }
+
   /* 高校名自由入力欄の見た目をChoices.jsのselectと揃える */
   #schoolOther {
-    display: none; /* 初期状態 */
+    display: none;
     padding: 0.7rem;
     font-size: 1rem;
     border: 1.5px solid #ccc;
@@ -110,6 +126,13 @@
     }
     input, select, button {
       font-size: 1rem;
+      padding: 0.8rem;
+    }
+    .choices__inner {
+      min-height: 2.5rem;
+      padding: 0.8rem;
+    }
+    #schoolOther {
       padding: 0.8rem;
     }
   }
@@ -189,7 +212,7 @@ function initSchoolChoices() {
 function adjustDropdownHeight() {
   const dropdown = document.querySelector('.choices__list--dropdown');
   if (dropdown) {
-    dropdown.style.maxHeight = (window.innerHeight * 0.6) + 'px'; // 画面高さの60％
+    dropdown.style.maxHeight = (window.innerHeight * 0.6) + 'px';
   }
 }
 
@@ -217,7 +240,7 @@ prefectureEl.addEventListener('change', () => {
     schoolOtherEl.style.display = 'none';
   }
 
-  adjustDropdownHeight(); // 都道府県変更後も高さを調整
+  adjustDropdownHeight();
 });
 
 document.getElementById('liffForm').addEventListener('submit', async (e) => {

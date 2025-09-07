@@ -5,9 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ワセダクラブ１次登録フォーム</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<!-- Choices.js CSS & JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 <style>
   :root {
-    --main-blue: #005bac; /* W早稲田ゼミのコーポレートブルー系 */
+    --main-blue: #005bac;
     --light-blue: #e6f0fa;
   }
   body {
@@ -69,6 +74,12 @@
   button:active {
     transform: scale(0.98);
   }
+
+  /* Choices.js ドロップダウンの高さを制限してスクロール可能に */
+  .choices-container-outer .choices__list--dropdown {
+    max-height: 300px;  /* 高さ調整 */
+    overflow-y: auto;
+  }
 </style>
 </head>
 <body>
@@ -113,10 +124,32 @@
 
 <script>
 let schoolsData = {};
+let schoolChoices;
 
+// 高校データ読み込み
 fetch('schools.json')
   .then(res => res.json())
-  .then(data => schoolsData = data);
+  .then(data => {
+    schoolsData = data;
+    initSchoolChoices(); // 初期化
+  });
+
+// Choices.js 初期化（検索可能＆スマホ対応）
+function initSchoolChoices() {
+  const schoolEl = document.getElementById('school');
+  schoolChoices = new Choices(schoolEl, {
+    searchEnabled: true,
+    itemSelectText: '',
+    shouldSort: false,
+    position: 'bottom',              // 下に表示
+    maxItemCount: -1,
+    renderChoiceLimit: -1,
+    searchPlaceholderValue: '学校名を入力',
+    classNames: {
+      containerOuter: 'choices-container-outer',
+    }
+  });
+}
 
 const prefectureEl = document.getElementById('prefecture');
 const schoolEl = document.getElementById('school');
@@ -124,14 +157,11 @@ const schoolOtherEl = document.getElementById('schoolOther');
 
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
-  schoolEl.innerHTML = '';
+  schoolChoices.clearStore(); // 古い選択肢を削除
+
   if(pref in schoolsData){
-    schoolsData[pref].forEach(school => {
-      const opt = document.createElement('option');
-      opt.value = school;
-      opt.textContent = school;
-      schoolEl.appendChild(opt);
-    });
+    const choices = schoolsData[pref].map(school => ({ value: school, label: school }));
+    schoolChoices.setChoices(choices, 'value', 'label', false);
     schoolEl.style.display = '';
     schoolOtherEl.style.display = 'none';
   } else if(pref === 'その他'){
@@ -171,6 +201,5 @@ ${gift}`;
   }
 });
 </script>
-
 </body>
 </html>

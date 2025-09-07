@@ -5,11 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ワセダクラブ１次登録フォーム</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
-<!-- Choices.js CSS & JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-
 <style>
   :root {
     --main-blue: #005bac;
@@ -74,12 +69,6 @@
   button:active {
     transform: scale(0.98);
   }
-
-  /* Choices.js ドロップダウンの高さを制限してスクロール可能に */
-  .choices-container-outer .choices__list--dropdown {
-    max-height: 300px;  /* 高さ調整 */
-    overflow-y: auto;
-  }
 </style>
 </head>
 <body>
@@ -105,7 +94,10 @@
   </select>
 
   <label id="schoolLabel">卒業（予定）高校</label>
-  <select id="school"></select>
+  <!-- datalist 入力補完 -->
+  <input type="text" id="school" list="schoolsList" placeholder="学校名を入力">
+  <datalist id="schoolsList"></datalist>
+
   <input type="text" id="schoolOther" style="display:none;" placeholder="高校名を入力">
 
   <label>携帯番号（記入例：090-1234-5678）</label>
@@ -124,51 +116,35 @@
 
 <script>
 let schoolsData = {};
-let schoolChoices;
 
 // 高校データ読み込み
 fetch('schools.json')
   .then(res => res.json())
-  .then(data => {
-    schoolsData = data;
-    initSchoolChoices(); // 初期化
-  });
-
-// Choices.js 初期化（検索可能＆スマホ対応）
-function initSchoolChoices() {
-  const schoolEl = document.getElementById('school');
-  schoolChoices = new Choices(schoolEl, {
-    searchEnabled: true,
-    itemSelectText: '',
-    shouldSort: false,
-    position: 'bottom',              // 下に表示
-    maxItemCount: -1,
-    renderChoiceLimit: -1,
-    searchPlaceholderValue: '学校名を入力',
-    classNames: {
-      containerOuter: 'choices-container-outer',
-    }
-  });
-}
+  .then(data => schoolsData = data);
 
 const prefectureEl = document.getElementById('prefecture');
-const schoolEl = document.getElementById('school');
+const schoolInput = document.getElementById('school');
 const schoolOtherEl = document.getElementById('schoolOther');
+const dataList = document.getElementById('schoolsList');
 
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
-  schoolChoices.clearStore(); // 古い選択肢を削除
+  schoolInput.value = '';
+  dataList.innerHTML = '';
 
   if(pref in schoolsData){
-    const choices = schoolsData[pref].map(school => ({ value: school, label: school }));
-    schoolChoices.setChoices(choices, 'value', 'label', false);
-    schoolEl.style.display = '';
+    schoolsData[pref].forEach(school => {
+      const option = document.createElement('option');
+      option.value = school;
+      dataList.appendChild(option);
+    });
+    schoolInput.style.display = '';
     schoolOtherEl.style.display = 'none';
   } else if(pref === 'その他'){
-    schoolEl.style.display = 'none';
+    schoolInput.style.display = 'none';
     schoolOtherEl.style.display = '';
   } else {
-    schoolEl.style.display = '';
+    schoolInput.style.display = '';
     schoolOtherEl.style.display = 'none';
   }
 });
@@ -180,7 +156,7 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   const firstName = document.getElementById('firstName').value;
   const birthDate = document.getElementById('birthDate').value;
   const prefecture = prefectureEl.value;
-  const school = prefecture === 'その他' ? schoolOtherEl.value : schoolEl.value;
+  const school = prefecture === 'その他' ? schoolOtherEl.value : schoolInput.value;
   const phone = document.getElementById('phone').value;
   const gift = document.getElementById('gift').value;
 

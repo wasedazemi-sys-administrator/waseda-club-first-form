@@ -5,40 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ワセダクラブ１次登録フォーム</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<!-- Choices.js CSS & JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 <style>
   :root {
     --main-blue: #005bac;
     --light-blue: #e6f0fa;
   }
+
   body {
     font-family: "Segoe UI", "Hiragino Sans", "メイリオ", sans-serif;
     background: var(--light-blue);
     margin: 0;
     padding: 0;
   }
+
   h2 {
     text-align: center;
     margin: 1.5rem 0;
     color: var(--main-blue);
     font-weight: 600;
   }
+
   form {
+    width: 90%;
     max-width: 480px;
-    margin: auto;
-    padding: 2rem;
+    margin: 1rem auto;
+    padding: 1.5rem;
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    box-sizing: border-box;
   }
+
   label {
     display: block;
     font-size: 0.9rem;
     margin-bottom: 0.4rem;
     color: #333;
   }
-  input, select {
+
+  input, select, button {
     width: 100%;
-    padding: 0.6rem;
+    padding: 0.7rem;
     font-size: 1rem;
     border: 1.5px solid #ccc;
     border-radius: 10px;
@@ -46,28 +58,48 @@
     box-sizing: border-box;
     transition: 0.2s;
   }
+
   input:focus, select:focus {
     border-color: var(--main-blue);
     outline: none;
     box-shadow: 0 0 6px rgba(0,91,172,0.3);
   }
+
   button {
-    width: 100%;
-    padding: 0.9rem;
     background: var(--main-blue);
     color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 1.05rem;
     font-weight: bold;
     cursor: pointer;
     transition: background 0.3s, transform 0.1s;
   }
+
   button:hover {
     background: #004080;
   }
+
   button:active {
     transform: scale(0.98);
+  }
+
+  /* Choices.js ドロップダウン高さ制御（初期値は50vh、後で動的調整） */
+  .choices-container-outer .choices__list--dropdown {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  @media (max-width: 480px) {
+    h2 {
+      font-size: 1.3rem;
+      margin: 1rem 0;
+    }
+    label {
+      font-size: 0.9rem;
+    }
+    input, select, button {
+      font-size: 1rem;
+      padding: 0.8rem;
+    }
   }
 </style>
 </head>
@@ -94,10 +126,7 @@
   </select>
 
   <label id="schoolLabel">卒業（予定）高校</label>
-  <!-- datalist 入力補完 -->
-  <input type="text" id="school" list="schoolsList" placeholder="学校名を入力">
-  <datalist id="schoolsList"></datalist>
-
+  <select id="school"></select>
   <input type="text" id="schoolOther" style="display:none;" placeholder="高校名を入力">
 
   <label>携帯番号（記入例：090-1234-5678）</label>
@@ -116,37 +145,67 @@
 
 <script>
 let schoolsData = {};
+let schoolChoices;
 
 // 高校データ読み込み
 fetch('schools.json')
   .then(res => res.json())
-  .then(data => schoolsData = data);
+  .then(data => {
+    schoolsData = data;
+    initSchoolChoices();
+  });
+
+// Choices.js 初期化（単一選択・候補が入力欄に被らない）
+function initSchoolChoices() {
+  const schoolEl = document.getElementById('school');
+  schoolChoices = new Choices(schoolEl, {
+    searchEnabled: true,
+    itemSelectText: '',
+    shouldSort: false,
+    maxItemCount: 1,
+    removeItemButton: false,
+    renderSelectedChoices: 'auto',
+    placeholder: true,
+    placeholderValue: '学校名を入力',
+    searchPlaceholderValue: '学校名を入力',
+    position: 'bottom'
+  });
+  adjustDropdownHeight(); // 初回調整
+}
+
+// ドロップダウン高さを画面サイズに応じて動的調整
+function adjustDropdownHeight() {
+  const dropdown = document.querySelector('.choices__list--dropdown');
+  if (dropdown) {
+    dropdown.style.maxHeight = (window.innerHeight * 0.6) + 'px'; // 画面高さの60％
+  }
+}
+
+// ウィンドウリサイズ時にも高さを再調整
+window.addEventListener('resize', adjustDropdownHeight);
 
 const prefectureEl = document.getElementById('prefecture');
-const schoolInput = document.getElementById('school');
+const schoolEl = document.getElementById('school');
 const schoolOtherEl = document.getElementById('schoolOther');
-const dataList = document.getElementById('schoolsList');
 
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
-  schoolInput.value = '';
-  dataList.innerHTML = '';
+  schoolChoices.clearStore();
 
   if(pref in schoolsData){
-    schoolsData[pref].forEach(school => {
-      const option = document.createElement('option');
-      option.value = school;
-      dataList.appendChild(option);
-    });
-    schoolInput.style.display = '';
+    const choices = schoolsData[pref].map(school => ({ value: school, label: school }));
+    schoolChoices.setChoices(choices, 'value', 'label', false);
+    schoolEl.style.display = '';
     schoolOtherEl.style.display = 'none';
   } else if(pref === 'その他'){
-    schoolInput.style.display = 'none';
+    schoolEl.style.display = 'none';
     schoolOtherEl.style.display = '';
   } else {
-    schoolInput.style.display = '';
+    schoolEl.style.display = '';
     schoolOtherEl.style.display = 'none';
   }
+
+  adjustDropdownHeight(); // 都道府県変更後も高さを調整
 });
 
 document.getElementById('liffForm').addEventListener('submit', async (e) => {
@@ -156,7 +215,7 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   const firstName = document.getElementById('firstName').value;
   const birthDate = document.getElementById('birthDate').value;
   const prefecture = prefectureEl.value;
-  const school = prefecture === 'その他' ? schoolOtherEl.value : schoolInput.value;
+  const school = prefecture === 'その他' ? schoolOtherEl.value : schoolEl.value;
   const phone = document.getElementById('phone').value;
   const gift = document.getElementById('gift').value;
 

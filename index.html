@@ -82,7 +82,7 @@
     transform: scale(0.98);
   }
 
-  /* Choices.js ドロップダウン高さ制御（初期値は50vh、後で動的調整） */
+  /* Choices.js ドロップダウン高さ制御 */
   .choices-container-outer .choices__list--dropdown {
     max-height: 50vh;
     overflow-y: auto;
@@ -104,7 +104,7 @@
     height: auto;
   }
 
-  /* 高校名自由入力欄の見た目をChoices.jsのselectと揃える */
+  /* 高校名自由入力欄の見た目をChoices.jsと揃える */
   #schoolOther {
     display: none;
     padding: 0.7rem;
@@ -114,6 +114,13 @@
     margin-bottom: 1.2rem;
     width: 100%;
     box-sizing: border-box;
+  }
+
+  /* ドロップダウン候補の長い名前を途中で…に省略 */
+  .choices__list--dropdown .choices__item--choice {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   @media (max-width: 480px) {
@@ -182,7 +189,6 @@
 let schoolsData = {};
 let schoolChoices;
 
-// 高校データ読み込み
 fetch('schools.json')
   .then(res => res.json())
   .then(data => {
@@ -190,7 +196,6 @@ fetch('schools.json')
     initSchoolChoices();
   });
 
-// Choices.js 初期化（単一選択・候補が入力欄に被らない）
 function initSchoolChoices() {
   const schoolEl = document.getElementById('school');
   schoolChoices = new Choices(schoolEl, {
@@ -205,10 +210,9 @@ function initSchoolChoices() {
     searchPlaceholderValue: '学校名を入力',
     position: 'bottom'
   });
-  adjustDropdownHeight(); // 初回調整
+  adjustDropdownHeight();
 }
 
-// ドロップダウン高さを画面サイズに応じて動的調整
 function adjustDropdownHeight() {
   const dropdown = document.querySelector('.choices__list--dropdown');
   if (dropdown) {
@@ -216,7 +220,6 @@ function adjustDropdownHeight() {
   }
 }
 
-// ウィンドウリサイズ時にも高さを再調整
 window.addEventListener('resize', adjustDropdownHeight);
 
 const prefectureEl = document.getElementById('prefecture');

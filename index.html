@@ -88,6 +88,18 @@
     overflow-y: auto;
   }
 
+  /* 高校名自由入力欄の見た目をChoices.jsのselectと揃える */
+  #schoolOther {
+    display: none; /* 初期状態 */
+    padding: 0.7rem;
+    font-size: 1rem;
+    border: 1.5px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 1.2rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   @media (max-width: 480px) {
     h2 {
       font-size: 1.3rem;
@@ -127,7 +139,7 @@
 
   <label id="schoolLabel">卒業（予定）高校</label>
   <select id="school"></select>
-  <input type="text" id="schoolOther" style="display:none;" placeholder="高校名を入力">
+  <input type="text" id="schoolOther" placeholder="高校名を入力">
 
   <label>携帯番号（記入例：090-1234-5678）</label>
   <input type="tel" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" required>

@@ -220,23 +220,28 @@ const schoolOtherEl = document.getElementById('schoolOther');
 
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
-  schoolChoices.clearStore();
 
   if (pref in schoolsData) {
+    // 都県データがある場合 → セレクト表示
+    schoolChoices.clearStore();
     const choices = schoolsData[pref].map(school => ({ value: school, label: school }));
     schoolChoices.setChoices(choices, 'value', 'label', false);
-    schoolWrapper.style.display = '';   // セレクトを表示
+
+    document.querySelector('.choices').style.display = ''; // ← Choices.jsのUIを表示
     schoolOtherEl.style.display = 'none';
   } else if (pref === 'その他') {
-    schoolWrapper.style.display = 'none'; // セレクトを隠す
-    schoolOtherEl.style.display = '';     // フリー入力を表示
+    // その他の場合 → セレクト非表示、テキスト入力表示
+    document.querySelector('.choices').style.display = 'none';
+    schoolOtherEl.style.display = '';
   } else {
-    schoolWrapper.style.display = '';   // デフォルトはセレクト
+    // 初期状態
+    document.querySelector('.choices').style.display = '';
     schoolOtherEl.style.display = 'none';
   }
 
   adjustDropdownHeight();
 });
+
 
 document.getElementById('liffForm').addEventListener('submit', async (e) => {
   e.preventDefault();

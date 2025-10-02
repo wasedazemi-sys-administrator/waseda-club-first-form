@@ -15,21 +15,18 @@
     --main-blue: #005bac;
     --light-blue: #e6f0fa;
   }
-
   body {
     font-family: "Segoe UI", "Hiragino Sans", "メイリオ", sans-serif;
     background: var(--light-blue);
     margin: 0;
     padding: 0;
   }
-
   h2 {
     text-align: center;
     margin: 1.5rem 0;
     color: var(--main-blue);
     font-weight: 600;
   }
-
   form {
     width: 90%;
     max-width: 480px;
@@ -40,14 +37,12 @@
     box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     box-sizing: border-box;
   }
-
   label {
     display: block;
     font-size: 0.9rem;
     margin-bottom: 0.4rem;
     color: #333;
   }
-
   input, select, button {
     width: 100%;
     padding: 0.7rem;
@@ -58,13 +53,11 @@
     box-sizing: border-box;
     transition: 0.2s;
   }
-
   input:focus, select:focus {
     border-color: var(--main-blue);
     outline: none;
     box-shadow: 0 0 6px rgba(0,91,172,0.3);
   }
-
   button {
     background: var(--main-blue);
     color: white;
@@ -73,22 +66,16 @@
     cursor: pointer;
     transition: background 0.3s, transform 0.1s;
   }
-
   button:hover {
     background: #004080;
   }
-
   button:active {
     transform: scale(0.98);
   }
-
-  /* Choices.js ドロップダウン高さ制御 */
   .choices-container-outer .choices__list--dropdown {
     max-height: 50vh;
     overflow-y: auto;
   }
-
-  /* Choices.js 入力ボックスを他の input と揃える */
   .choices__inner {
     min-height: 2.5rem;
     padding: 0.7rem;
@@ -97,14 +84,11 @@
     font-size: 1rem;
     box-sizing: border-box;
   }
-
   .choices__input {
     padding: 0;
     margin: 0;
     height: auto;
   }
-
-  /* 高校名自由入力欄の見た目をChoices.jsと揃える */
   #schoolOther {
     display: none;
     padding: 0.7rem;
@@ -115,51 +99,25 @@
     width: 100%;
     box-sizing: border-box;
   }
-
-  /* ドロップダウン候補の長い名前を途中で…に省略 */
   .choices__list--dropdown .choices__item--choice {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
   .privacy-box {
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: #555;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 1rem;
-  margin: 1.5rem 0;
-}
-
-.privacy-box .text-right {
-  text-align: right;
-  font-weight: bold;
-  margin-top: 0.8rem;
-}
-
-
-  @media (max-width: 480px) {
-    h2 {
-      font-size: 1.3rem;
-      margin: 1rem 0;
-    }
-    label {
-      font-size: 0.9rem;
-    }
-    input, select, button {
-      font-size: 1rem;
-      padding: 0.8rem;
-    }
-    .choices__inner {
-      min-height: 2.5rem;
-      padding: 0.8rem;
-    }
-    #schoolOther {
-      padding: 0.8rem;
-    }
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #555;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+  .privacy-box .text-right {
+    text-align: right;
+    font-weight: bold;
+    margin-top: 0.8rem;
   }
 </style>
 </head>
@@ -201,7 +159,6 @@
     <option value="Google Playギフトコード">Google Playギフトコード</option>
   </select>
 
-  <!-- 個人情報 -->
   <div class="privacy-box">
     ＜個人情報の取り扱いについて＞<br>
     お預かりするお客様情報は、<br>
@@ -234,7 +191,7 @@ function initSchoolChoices() {
     itemSelectText: '',
     shouldSort: false,
     maxItemCount: 1,
-    removeItemButton: true,      // ← 選択解除ボタンを有効化
+    removeItemButton: true,
     renderSelectedChoices: 'auto',
     placeholder: true,
     placeholderValue: '学校名を入力',
@@ -250,7 +207,6 @@ function adjustDropdownHeight() {
     dropdown.style.maxHeight = (window.innerHeight * 0.6) + 'px';
   }
 }
-
 window.addEventListener('resize', adjustDropdownHeight);
 
 const prefectureEl = document.getElementById('prefecture');
@@ -259,18 +215,20 @@ const schoolOtherEl = document.getElementById('schoolOther');
 
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
+  const schoolWrapper = schoolEl.closest('.choices'); // ← ChoicesのUIラッパー
+
   schoolChoices.clearStore();
 
-  if(pref in schoolsData){
+  if (pref in schoolsData) {
     const choices = schoolsData[pref].map(school => ({ value: school, label: school }));
     schoolChoices.setChoices(choices, 'value', 'label', false);
-    schoolEl.style.display = '';
+    schoolWrapper.style.display = '';   // セレクトを表示
     schoolOtherEl.style.display = 'none';
-  } else if(pref === 'その他'){
-    schoolEl.style.display = 'none';
-    schoolOtherEl.style.display = '';
+  } else if (pref === 'その他') {
+    schoolWrapper.style.display = 'none'; // セレクトを隠す
+    schoolOtherEl.style.display = '';     // フリー入力を表示
   } else {
-    schoolEl.style.display = '';
+    schoolWrapper.style.display = '';   // デフォルトでセレクト表示
     schoolOtherEl.style.display = 'none';
   }
 
@@ -284,7 +242,10 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   const firstName = document.getElementById('firstName').value;
   const birthDate = document.getElementById('birthDate').value;
   const prefecture = prefectureEl.value;
-  const school = prefecture === 'その他' ? schoolOtherEl.value : schoolEl.value;
+  const schoolWrapper = schoolEl.closest('.choices');
+  const school = (prefecture === 'その他' || schoolWrapper.style.display === 'none')
+    ? schoolOtherEl.value
+    : schoolEl.value;
   const phone = document.getElementById('phone').value;
   const gift = document.getElementById('gift').value;
 

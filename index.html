@@ -176,6 +176,7 @@
 <script>
 let schoolsData = {};
 let schoolChoices;
+let schoolWrapper; // ← グローバルで保持
 
 fetch('schools.json')
   .then(res => res.json())
@@ -198,6 +199,10 @@ function initSchoolChoices() {
     searchPlaceholderValue: '学校名を入力',
     position: 'bottom'
   });
+
+  // ← ここで確実に .choices ラッパーを取得
+  schoolWrapper = schoolEl.parentElement.querySelector('.choices'); 
+
   adjustDropdownHeight();
 }
 
@@ -215,8 +220,6 @@ const schoolOtherEl = document.getElementById('schoolOther');
 
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
-  const schoolWrapper = schoolEl.closest('.choices'); // ← ChoicesのUIラッパー
-
   schoolChoices.clearStore();
 
   if (pref in schoolsData) {
@@ -228,7 +231,7 @@ prefectureEl.addEventListener('change', () => {
     schoolWrapper.style.display = 'none'; // セレクトを隠す
     schoolOtherEl.style.display = '';     // フリー入力を表示
   } else {
-    schoolWrapper.style.display = '';   // デフォルトでセレクト表示
+    schoolWrapper.style.display = '';   // デフォルトはセレクト
     schoolOtherEl.style.display = 'none';
   }
 
@@ -242,7 +245,6 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   const firstName = document.getElementById('firstName').value;
   const birthDate = document.getElementById('birthDate').value;
   const prefecture = prefectureEl.value;
-  const schoolWrapper = schoolEl.closest('.choices');
   const school = (prefecture === 'その他' || schoolWrapper.style.display === 'none')
     ? schoolOtherEl.value
     : schoolEl.value;
@@ -266,5 +268,6 @@ ${gift}`;
   }
 });
 </script>
+
 </body>
 </html>

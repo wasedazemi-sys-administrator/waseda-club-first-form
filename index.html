@@ -200,11 +200,11 @@ function initSchoolChoices() {
     position: 'bottom'
   });
 
-  // ← ここで確実に .choices ラッパーを取得
-  schoolWrapper = schoolEl.parentElement.querySelector('.choices'); 
-
+  // ← ここでラッパー取得
+  schoolWrapper = schoolEl.closest('.choices'); 
   adjustDropdownHeight();
 }
+
 
 function adjustDropdownHeight() {
   const dropdown = document.querySelector('.choices__list--dropdown');
@@ -218,29 +218,34 @@ const prefectureEl = document.getElementById('prefecture');
 const schoolEl = document.getElementById('school');
 const schoolOtherEl = document.getElementById('schoolOther');
 
+const choicesWrapper = document.querySelector('#school').closest('.choices');
+
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
 
   if (pref in schoolsData) {
-    // 都県データがある場合 → セレクト表示
+    // 都道府県にデータがある場合 → Choices表示
     schoolChoices.clearStore();
     const choices = schoolsData[pref].map(school => ({ value: school, label: school }));
     schoolChoices.setChoices(choices, 'value', 'label', false);
 
-    document.querySelector('.choices').style.display = ''; // ← Choices.jsのUIを表示
+    choicesWrapper.style.display = '';   // ← これを表示
     schoolOtherEl.style.display = 'none';
+    schoolOtherEl.value = '';            // 入力リセット
   } else if (pref === 'その他') {
-    // その他の場合 → セレクト非表示、テキスト入力表示
-    document.querySelector('.choices').style.display = 'none';
+    // その他の場合 → テキスト入力表示
+    choicesWrapper.style.display = 'none'; 
     schoolOtherEl.style.display = '';
   } else {
-    // 初期状態
-    document.querySelector('.choices').style.display = '';
+    // 初期化
+    choicesWrapper.style.display = '';
     schoolOtherEl.style.display = 'none';
+    schoolOtherEl.value = '';
   }
 
   adjustDropdownHeight();
 });
+
 
 
 document.getElementById('liffForm').addEventListener('submit', async (e) => {

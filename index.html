@@ -189,7 +189,7 @@
   <select id="school"></select>
   <input type="text" id="schoolOther" placeholder="高校名を入力">
 
-  <label>携帯番号（記入例：090-1234-5678）</label>
+  <label>携帯番号（例：090-1234-5678）</label>
   <input type="text" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" placeholder="例：090-1234-5678" required>
 
   <label>１次登録特典ギフト【現役高校生限定】</label>
@@ -320,24 +320,6 @@ prefectureEl.addEventListener('change', () => {
 
   adjustDropdownHeight();
 });
-  
-const phoneInput = document.getElementById('phone');
-  phoneInput.addEventListener('input', (e) => {
-    let value = e.target.value.replace(/[^\d]/g, '');
-    if (value.length > 3 && value.length <= 7) {
-      value = value.slice(0,3) + '-' + value.slice(3);
-    } else if (value.length > 7) {
-      value = value.slice(0,3) + '-' + value.slice(3,7) + '-' + value.slice(7,11);
-    }
-    e.target.value = value;
-  });
-  phoneInput.addEventListener('blur', () => {
-    const pattern = /^\d{3}-\d{4}-\d{4}$/;
-    if (phoneInput.value !== '' && !pattern.test(phoneInput.value)) {
-      alert('携帯番号は「090-1234-5678」の形式で入力してください');
-      phoneInput.focus();
-    }
-  });
 
 document.getElementById('liffForm').addEventListener('submit', async (e) => {
   e.preventDefault();

@@ -224,7 +224,12 @@
 <script>
 let schoolsData = {};
 let schoolChoices;
-let schoolChoicesWrapper; // ラッパー参照をここに保存
+let schoolChoicesWrapper;
+
+// 1. LIFFの初期化はページ読み込み時に行う
+liff.init({ liffId: "2008066585-jPdDKdgO" }).catch(err => {
+  console.error('LIFF Init Error:', err);
+});
 
 fetch('schools.json')
   .then(res => res.json())
@@ -236,7 +241,6 @@ fetch('schools.json')
 function initSchoolChoices() {
   const schoolEl = document.getElementById('school');
 
-  // Choices 初期化（既存オプションはそのまま）
   schoolChoices = new Choices(schoolEl, {
     searchEnabled: true,
     itemSelectText: '',
@@ -250,32 +254,13 @@ function initSchoolChoices() {
     position: 'bottom'
   });
 
-  // ======= ラッパーを探す（いくつかの戦略で頑健に探す） =======
-  // 1) Choices インスタンスが containerOuter を公開している場合（バージョン差対策）
   if (schoolChoices && schoolChoices.containerOuter) {
     schoolChoicesWrapper = schoolChoices.containerOuter.element || schoolChoices.containerOuter;
   }
-
-  // 2) next/previous sibling に .choices があるか確認
-  if (!schoolChoicesWrapper) {
-    if (schoolEl.nextElementSibling && schoolEl.nextElementSibling.classList.contains('choices')) {
-      schoolChoicesWrapper = schoolEl.nextElementSibling;
-    } else if (schoolEl.previousElementSibling && schoolEl.previousElementSibling.classList.contains('choices')) {
-      schoolChoicesWrapper = schoolEl.previousElementSibling;
-    }
-  }
-
-  // 3) 親要素内を探す（最終手段）
   if (!schoolChoicesWrapper && schoolEl.parentElement) {
     schoolChoicesWrapper = schoolEl.parentElement.querySelector('.choices');
   }
 
-  // 4) 本当に見つからなければページ内の最初の .choices を使う（最終フォールバック）
-  if (!schoolChoicesWrapper) {
-    schoolChoicesWrapper = document.querySelector('.choices');
-  }
-
-  console.log('schoolChoicesWrapper (found):', schoolChoicesWrapper);
   adjustDropdownHeight();
 }
 
@@ -295,31 +280,24 @@ const schoolOtherEl = document.getElementById('schoolOther');
 prefectureEl.addEventListener('change', () => {
   const pref = prefectureEl.value;
 
-  // 既存の選択肢をクリア（必要に応じて clearStore/clearChoices を選んでください）
   if (schoolChoices && typeof schoolChoices.clearStore === 'function') {
-    // clearStore は items, choices, groups を全部消すので注意（今回は都道府県ごとに setChoices するため OK）
     schoolChoices.clearStore();
   }
+
+  // 元の <select> は常に非表示(display: 'none')にしておくのが Choices.js の正しい扱い方
+  schoolEl.style.display = 'none';
 
   if (pref in schoolsData) {
     const choices = schoolsData[pref].map(school => ({ value: school, label: school }));
     schoolChoices.setChoices(choices, 'value', 'label', false);
 
-    // Choices の UI を表示、自由入力を非表示
     if (schoolChoicesWrapper) schoolChoicesWrapper.style.display = '';
-    // まれに元の <select> が可視状態になるケースがあるため念のため元 select も表示に戻す
-    schoolEl.style.display = '';
     schoolOtherEl.style.display = 'none';
   } else if (pref === 'その他') {
-    // Choices の UI と元 select を確実に隠し、自由入力欄を表示
     if (schoolChoicesWrapper) schoolChoicesWrapper.style.display = 'none';
-    // 元の select も念のため隠す（いくつかの環境で select が残ることがある）
-    schoolEl.style.display = 'none';
     schoolOtherEl.style.display = 'block';
   } else {
-    // 初期状態・空選択（Choices を空にして自由入力を隠す）
     if (schoolChoicesWrapper) schoolChoicesWrapper.style.display = '';
-    schoolEl.style.display = '';
     schoolOtherEl.style.display = 'none';
   }
 
@@ -333,7 +311,7 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   const firstName = document.getElementById('firstName').value;
   const birthDate = document.getElementById('birthDate').value;
   const prefecture = prefectureEl.value;
-  // 値の取得は getValue(true) を優先して使う（Choices の API）。配列で返る可能性があるので先頭を取り出す。
+
   let schoolValue = '';
   if (prefecture === 'その他') {
     schoolValue = schoolOtherEl.value.trim();
@@ -352,7 +330,6 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   }
 
   const phone = document.getElementById('phone').value;
-  //const gift = document.getElementById('gift').value;
   const university = document.getElementById('university').value;
 
   const message = `＜ワセダクラブ1次登録情報＞
@@ -364,14 +341,13 @@ ${phone}
 ${university}`;
 
   try {
-    await liff.init({ liffId: "2008066585-jPdDKdgO" });
+    // init は済んでいるので sendMessages だけ実行
     await liff.sendMessages([{ type: 'text', text: message }]);
     liff.closeWindow();
   } catch(err) {
     alert('送信失敗: ' + err);
   }
 });
-
 </script>
 </body>
 </html>

@@ -346,9 +346,14 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
     }
   }
 
+  if (!schoolValue) {
+    alert('高校名を入力・選択してください。');
+    return;
+  }
+
   const phone = document.getElementById('phone').value;
   //const gift = document.getElementById('gift').value;
-  const university = document.getElementByid('university').value;
+  const university = document.getElementById('university').value;
 
   const message = `＜ワセダクラブ1次登録情報＞
 ${lastName}

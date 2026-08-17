@@ -192,6 +192,10 @@
   <label>携帯番号（例：090-1234-5678）</label>
   <input type="text" id="phone" pattern="^\d{2,4}-\d{2,4}-\d{4}$" placeholder="例：090-1234-5678" required>
 
+  <label>志望大学（内定先大学を含む）</label>
+  <input type="text" id="university" placeholder="早稲田大学" required>
+  
+  <!--
   <label>１次登録特典ギフト【現役高校生限定】</label>
   <select id="gift" required>
     <option value="">選択してください</option>
@@ -200,6 +204,7 @@
     <option value="Amazonギフトコード">Amazonギフトコード</option>
     <option value="Google Playギフトコード">Google Playギフトコード</option>
   </select>
+  -->
 
   <!-- 個人情報 -->
   <div class="privacy-box">
@@ -342,7 +347,8 @@ document.getElementById('liffForm').addEventListener('submit', async (e) => {
   }
 
   const phone = document.getElementById('phone').value;
-  const gift = document.getElementById('gift').value;
+  //const gift = document.getElementById('gift').value;
+  const university = document.getElementByid('university').value;
 
   const message = `＜ワセダクラブ1次登録情報＞
 ${lastName}
@@ -350,7 +356,7 @@ ${firstName}
 ${birthDate}
 ${schoolValue}
 ${phone}
-${gift}`;
+${university}`;
 
   try {
     await liff.init({ liffId: "2008066585-jPdDKdgO" });
